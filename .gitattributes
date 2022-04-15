@@ -1,0 +1,3 @@
+# the visual studio code reStructuredText language server has problems with crlf
+*.rst text eol=lf
+*.rst.jinja text eol=lf
