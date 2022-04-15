@@ -1,0 +1,192 @@
+# Written in 2017, 2019 by Henrik Steffen Gaßmann <henrik@gassmann.onl>
+#
+# To the extent possible under law, the author(s) have dedicated all
+# copyright and related and neighboring rights to this software to the
+# public domain worldwide. This software is distributed without any warranty.
+#
+# You should have received a copy of the CC0 Public Domain Dedication
+# along with this software. If not, see
+#
+#     http://creativecommons.org/publicdomain/zero/1.0/
+#
+########################################################################
+cmake_minimum_required(VERSION 3.16)
+
+########################################################################
+# configure vcpkg from environment vars if possible
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "")
+endif()
+
+if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+    set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
+endif()
+
+if(NOT DEFINED VCPKG_FEATURE_FLAGS)
+    set(VCPKG_FEATURE_FLAGS "registries" CACHE STRING "")
+endif()
+if(NOT DEFINED VCPKG_OVERLAY_TRIPLETS)
+    set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/tools/triplets" CACHE STRING "")
+endif()
+
+if (BUILD_TESTING OR NOT DEFINED BUILD_TESTING)
+    list(APPEND VCPKG_MANIFEST_FEATURES "tests")
+endif()
+
+########################################################################
+project({{project_slug}}
+    VERSION {{buildver}}
+    LANGUAGES CXX
+)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
+include(EnforceOutOfSourceBuilds)
+include(CMakeDependentOption)
+include(CMakePackageConfigHelpers)
+include(FeatureSummary)
+include(GNUInstallDirs)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+
+########################################################################
+# options
+
+########################################################################
+# dependencies
+
+find_package(Catch2 CONFIG)
+cmake_dependent_option(BUILD_TESTING "Build the documentation using sphinx" ON Catch2_FOUND OFF)
+set_package_properties(Catch2 PROPERTIES
+    TYPE OPTIONAL
+    PURPOSE "Allows to build the test suite"
+)
+
+find_package(Sphinx)
+cmake_dependent_option(BUILD_DOCS "Build the documentation using sphinx" ON Sphinx_FOUND OFF)
+set_package_properties(Sphinx PROPERTIES
+    TYPE OPTIONAL
+    PURPOSE "Allows to build the documentation"
+)
+
+
+########################################################################
+# warning configuration
+include(CompilerWarnings)
+
+
+########################################################################
+# additional compiler options
+set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "" FORCE)
+
+add_library(compiler_settings INTERFACE)
+add_library(Deeplex::{{project_slug}}_compiler_settings ALIAS compiler_settings)
+set_target_properties(compiler_settings PROPERTIES
+    EXPORT_NAME {{project_slug}}_compiler_settings
+)
+
+target_compile_features(compiler_settings INTERFACE cxx_std_20)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(compiler_settings INTERFACE
+        /utf-8 # all sources are utf-8 encoded
+        /Zc:__cplusplus # correctly define the __cplusplus macro
+    )
+endif()
+
+
+########################################################################
+# library
+{% set visibility = "INTERFACE" if header_only == 'yes' else "PUBLIC" %}
+{% set src_visibility = "INTERFACE" if header_only == 'yes' else "PRIVATE" %}
+add_library({{project_slug}}{% if header_only == 'yes' %} INTERFACE{% endif %})
+add_library(Deeplex::{{project_slug}} ALIAS {{project_slug}})
+
+target_link_libraries({{project_slug}} {{visibility}} Deeplex::{{project_slug}}_compiler_settings)
+
+target_include_directories({{project_slug}} {{visibility}}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:include>
+)
+
+########################################################################
+# library test project
+if (BUILD_TESTING)
+    add_executable({{project_slug}}-tests)
+    target_sources({{project_slug}}-tests PRIVATE
+        src/{{namespace}}_tests/test_utils.hpp
+    )
+
+    target_link_libraries({{project_slug}}-tests PRIVATE
+        Deeplex::{{project_slug}}
+
+        Catch2::Catch2 Catch2::Catch2WithMain
+    )
+
+    target_include_directories({{project_slug}}-tests PRIVATE
+        scr/{{namespace}}_tests
+    )
+
+    add_test(NAME {{project_slug}}-tests COMMAND {{project_slug}}-tests)
+endif()
+
+########################################################################
+# source files
+include(sources.cmake)
+
+set(_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/dplx")
+foreach (header IN LISTS _SOURCES)
+    set(_SRC_PATH ${_INC_DIR}/${header})
+    get_filename_component(_SRC_NAME ${_SRC_PATH} NAME_WLE)
+    get_filename_component(_SRC_DIR ${_SRC_PATH} DIRECTORY)
+    {%- if header_only == 'yes' %}
+    list(APPEND _ALL_SRCS $<BUILD_INTERFACE:${_SRC_PATH}>)
+    {%- else %}
+    list(APPEND _ALL_SRCS ${_SRC_DIR}/${_SRC_NAME}.cpp ${_SRC_PATH})
+    {%- endif %}
+    list(APPEND _TEST_SRCS ${_SRC_DIR}/${_SRC_NAME}.test.cpp)
+endforeach()
+target_sources({{project_slug}} {{src_visibility}} ${_ALL_SRCS})
+if (BUILD_TESTING)
+    target_sources({{project_slug}}-tests PRIVATE ${_TEST_SRCS})
+endif()
+
+
+########################################################################
+# docs
+if (BUILD_DOCS)
+    add_subdirectory(docs)
+endif()
+
+########################################################################
+# cmake install
+install(DIRECTORY src/dplx
+    TYPE INCLUDE
+    FILES_MATCHING
+    REGEX ".*\\.h(pp)?"
+)
+
+install(TARGETS {{project_slug}} compiler_settings EXPORT {{project_slug}}-targets)
+install(EXPORT {{project_slug}}-targets
+    NAMESPACE Deeplex::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/{{project_slug}}"
+)
+
+configure_package_config_file(tools/{{project_slug}}-config.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/{{project_slug}}-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/{{project_slug}}"
+)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/{{project_slug}}-config-version.cmake"
+    COMPATIBILITY SameMinorVersion
+)
+
+install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/{{project_slug}}-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/{{project_slug}}-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/{{project_slug}}"
+)
+
+
+########################################################################
+feature_summary(WHAT PACKAGES_FOUND PACKAGES_NOT_FOUND)
