@@ -97,9 +97,9 @@ endif()
 
 ########################################################################
 # library
-{% set visibility = "INTERFACE" if header_only == 'yes' else "PUBLIC" %}
-{% set src_visibility = "INTERFACE" if header_only == 'yes' else "PRIVATE" %}
-add_library({{project_slug}}{% if header_only == 'yes' %} INTERFACE{% endif %})
+{%- set visibility = ("INTERFACE" if header_only == True else "PUBLIC") %}
+{%- set src_visibility = "INTERFACE" if header_only == True else "PRIVATE" %}
+add_library({{project_slug}}{% if header_only == True %} INTERFACE{% endif %})
 add_library(Deeplex::{{project_slug}} ALIAS {{project_slug}})
 
 target_link_libraries({{project_slug}} {{visibility}} Deeplex::{{project_slug}}_compiler_settings)
@@ -139,7 +139,7 @@ foreach (header IN LISTS _SOURCES)
     set(_SRC_PATH ${_INC_DIR}/${header})
     get_filename_component(_SRC_NAME ${_SRC_PATH} NAME_WLE)
     get_filename_component(_SRC_DIR ${_SRC_PATH} DIRECTORY)
-    {%- if header_only == 'yes' %}
+    {%- if header_only == True %}
     list(APPEND _ALL_SRCS $<BUILD_INTERFACE:${_SRC_PATH}>)
     {%- else %}
     list(APPEND _ALL_SRCS ${_SRC_DIR}/${_SRC_NAME}.cpp ${_SRC_PATH})
