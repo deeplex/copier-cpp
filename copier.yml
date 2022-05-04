@@ -19,10 +19,24 @@ project_slug:
     help: The mangled project name used as repo id and cmake config name
     default: "{{ project_name|lower|replace('_', '-')|replace(' ', '-') }}"
 
+namespace:
+    type: str
+    help: The project's C++ namespace (will be prefixed with dplx::)
+    default: ""
+
+header_only:
+    type: bool
+    help: Generate a header only library project
+
 semver:
     type: str
     help: The current (semantic) version of the project
     default: 0.0.0-alpha.1
+
+buildver:
+    type: str
+    help: The CMake build version
+    default: "{{ '{}.0'.format(semver.split('-')[0]) }}"
 
 year:
     type: str

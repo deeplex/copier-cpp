@@ -33,6 +33,11 @@ release = '{{semver}}'
 extensions = [
     "sphinx_multiversion",
 ]
+primary_domain = 'cpp'
+highlight_language = 'cpp'
+cpp_index_common_prefix = [
+    'dplx::{{namespace}}',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = [
