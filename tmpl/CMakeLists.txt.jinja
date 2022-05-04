@@ -11,24 +11,11 @@
 #
 ########################################################################
 cmake_minimum_required(VERSION 3.16)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
 ########################################################################
 # configure vcpkg from environment vars if possible
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "")
-endif()
-
-if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
-    set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
-endif()
-
-if(NOT DEFINED VCPKG_FEATURE_FLAGS)
-    set(VCPKG_FEATURE_FLAGS "registries" CACHE STRING "")
-endif()
-if(NOT DEFINED VCPKG_OVERLAY_TRIPLETS)
-    set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/tools/triplets" CACHE STRING "")
-endif()
+include(VcpkgDefaults)
 
 if (BUILD_TESTING OR NOT DEFINED BUILD_TESTING)
     list(APPEND VCPKG_MANIFEST_FEATURES "tests")
@@ -40,7 +27,6 @@ project({{project_slug}}
     LANGUAGES CXX
 )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 include(EnforceOutOfSourceBuilds)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
