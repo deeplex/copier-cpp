@@ -1,3 +1,18 @@
-set(_SOURCES
-    {{namespace}}.hpp
+dplx_target_sources({{project_slug}}
+    TEST_TARGET {{project_slug}}-tests
+    MODE SMART_{% if header_only == True %}HEADER_ONLY{% else %}SOURCE{% endif %} MERGED_LAYOUT
+    BASE_DIR dplx
+
+    PUBLIC
+        {{namespace}}
 )
+
+if (BUILD_TESTING)
+    dplx_target_sources({{project_slug}}-tests PRIVATE
+        MODE VERBATIM
+        BASE_DIR {{namespace}}_tests
+
+        PRIVATE
+            test_utils.hpp
+    )
+endif ()
