@@ -40,7 +40,7 @@ jobs:
         uses: lukka/run-vcpkg@v10
         with:
           vcpkgDirectory: ${{ github.workspace }}/build/vcpkg
-          vcpkgGitCommitId: 94ce0dab56f4d8ba6bd631ba59ed682b02d45c46
+          vcpkgGitCommitId: 6f7ffeb18f99796233b958aaaf14ec7bd4fb64b2
           prependedCacheKey: compiler=${{ matrix.compiler }}
           #appendedCacheKey: r00
 
@@ -87,9 +87,9 @@ jobs:
         uses: lukka/run-vcpkg@v10
         with:
           vcpkgDirectory: ${{ github.workspace }}/build/vcpkg
-          vcpkgGitCommitId: 94ce0dab56f4d8ba6bd631ba59ed682b02d45c46
+          vcpkgGitCommitId: 6f7ffeb18f99796233b958aaaf14ec7bd4fb64b2
           prependedCacheKey: compiler=gcc
-          #appendedCacheKey: r01
+          #appendedCacheKey: r00
 
       - name: Disable vcpkg cache to prevent racing with the Test jobs
         run: |
