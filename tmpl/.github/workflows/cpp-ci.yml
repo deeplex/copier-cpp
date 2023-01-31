@@ -72,6 +72,12 @@ jobs:
         shell: bash
 
 
+      - if: ${{ failure() || cancelled() }}
+        run: |
+          echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
+        shell: bash
+
+
   check-format:
     name: clang-tidy & clang-format
     runs-on: ubuntu-22.04
