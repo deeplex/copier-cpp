@@ -40,7 +40,7 @@ jobs:
         uses: lukka/run-vcpkg@v10
         with:
           vcpkgDirectory: ${{ github.workspace }}/build/vcpkg
-          vcpkgGitCommitId: 6f7ffeb18f99796233b958aaaf14ec7bd4fb64b2
+          vcpkgGitCommitId: 71d3fa60b67540e9bf5fde2bf2188f579ff09433
           prependedCacheKey: compiler=${{ matrix.compiler }}
           #appendedCacheKey: r00
 
@@ -99,15 +99,10 @@ jobs:
       - name: Initialize vcpkg
         uses: lukka/run-vcpkg@v10
         with:
-          vcpkgDirectory: ${{ github.workspace }}/build/vcpkg
-          vcpkgGitCommitId: 6f7ffeb18f99796233b958aaaf14ec7bd4fb64b2
-          prependedCacheKey: compiler=clang
+          vcpkgDirectory: ${{ github.workspace }}/../vcpkg
+          vcpkgGitCommitId: 71d3fa60b67540e9bf5fde2bf2188f579ff09433
+          prependedCacheKey: compiler=clang-15
           #appendedCacheKey: r00
-
-      - name: Disable vcpkg cache to prevent racing with the Test jobs
-        run: |
-          echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
-        shell: bash
 
       - name: Configure x64-linux-clang preset
         uses: lukka/run-cmake@v10
@@ -131,3 +126,8 @@ jobs:
       - name: Fail if issues have been raised
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
+
+      - if: ${{ failure() || cancelled() }}
+        run: |
+          echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
+        shell: bash
