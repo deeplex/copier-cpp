@@ -6,7 +6,7 @@
     "registries": [
         {
             "kind": "git",
-            "repository": "https://github.com/deeplex-net/vcpkg-registry",
+            "repository": "https://github.com/deeplex/vcpkg-registry",
             "baseline": "e0379d3342d009a2ca0b713af9ced5df6e155ada",
             "packages": [
                 "concrete"
