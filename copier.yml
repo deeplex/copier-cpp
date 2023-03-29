@@ -24,6 +24,10 @@ namespace:
     help: The project's C++ namespace (will be prefixed with dplx::)
     default: ""
 
+header_config:
+    type: bool
+    help: Generate a configuration header with values from configure time.
+
 header_only:
     type: bool
     help: Generate a header only library project

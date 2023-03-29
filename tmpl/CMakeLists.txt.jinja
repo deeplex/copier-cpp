@@ -97,6 +97,9 @@ target_link_libraries({{project_slug}} {{visibility}} Deeplex::{{project_slug}}_
 
 target_include_directories({{project_slug}} {{visibility}}
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+{%- if header_config %}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated/src>
+{%- endif %}
     $<INSTALL_INTERFACE:include>
 )
 
@@ -138,6 +141,13 @@ install(DIRECTORY src/dplx
     FILES_MATCHING
     REGEX ".*\\.h(pp)?"
 )
+{%- if header_config %}
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx
+    TYPE INCLUDE
+    FILES_MATCHING
+    REGEX ".*\\.h(pp)?"
+)
+{%- endif %}
 
 install(TARGETS {{project_slug}} compiler_settings EXPORT {{project_slug}}-targets)
 install(EXPORT {{project_slug}}-targets
