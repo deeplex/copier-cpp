@@ -9,18 +9,17 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[{*.rst,*.rst.jinja}]
+[*.rst{,.jinja}]
 max_line_length = off
 trim_trailing_whitespace = false
 
-[{*.json,*.json.jinja}]
+[*.json{,.jinja}]
 max_line_length = off
 insert_final_newline = false
 trim_trailing_whitespace = false
 
-[{*.yml,*.yml.jinja}]
+[*.y{,a}ml{,.jinja}]
 indent_size = 2
-[{*.yaml,*.yaml.jinja}]
-indent_size = 2
+
 [*.clang-{format,tidy}]
 indent_size = 2
