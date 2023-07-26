@@ -5,6 +5,7 @@ on:
             - master
             - releases/v*
     pull_request:
+    merge_group:
 
 jobs:
   build-and-test:
