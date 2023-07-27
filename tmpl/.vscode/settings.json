@@ -1,3 +1,11 @@
 {
-    "esbonio.sphinx.confDir": "${workspaceFolder}\\docs"
+    "esbonio.sphinx.buildDir": "${workspaceFolder}/build/html",
+    "esbonio.sphinx.confDir": "${workspaceFolder}/docs",
+    "esbonio.sphinx.srcDir": "${workspaceFolder}/docs",
+    // the python/reST language server currently has communication problems
+    "restructuredtext.linter.disabledLinters": [
+        "doc8",
+        "rst-lint",
+        "rstcheck",
+    ],
 }
