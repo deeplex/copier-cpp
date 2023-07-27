@@ -55,7 +55,6 @@ jobs:
           CC: ''
           CXX: ''
 
-
       - name: Build ${{ matrix.triplet }}-${{ matrix.compiler }}-release preset
         uses: lukka/run-cmake@v10
         with:
@@ -68,12 +67,6 @@ jobs:
 
       - name: Prevent uploading a corrupted vcpkg cache
         if: ${{ failure() || cancelled() }}
-        run: |
-          echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
-        shell: bash
-
-
-      - if: ${{ failure() || cancelled() }}
         run: |
           echo "RUNVCPKG_NO_CACHE=1" >> $GITHUB_ENV
         shell: bash
