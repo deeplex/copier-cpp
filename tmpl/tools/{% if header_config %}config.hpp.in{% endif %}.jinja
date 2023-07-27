@@ -11,6 +11,10 @@
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 // #cmakedefine01
+{% if workaround_header %}
+#cmakedefine01 DPLX_{{namespace|upper}}_DISABLE_WORKAROUNDS
+#cmakedefine01 DPLX_{{namespace|upper}}_FLAG_OUTDATED_WORKAROUNDS
+{%- endif %}
 
 // NOLINTEND(cppcoreguidelines-macro-usage)
 // NOLINTEND(modernize-macro-to-enum)

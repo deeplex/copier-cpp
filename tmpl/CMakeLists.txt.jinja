@@ -43,6 +43,10 @@ endif()
 
 ########################################################################
 # options
+{% if workaround_header %}
+option(DPLX_{{namespace|upper}}_DISABLE_WORKAROUNDS "Disable all workarounds" OFF)
+option(DPLX_{{namespace|upper}}_FLAG_OUTDATED_WORKAROUNDS "Emit compiler errors for workarounds which are active, but haven't been validated for this version" OFF)
+{%- endif %}
 
 ########################################################################
 # dependencies
