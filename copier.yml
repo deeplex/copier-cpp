@@ -32,16 +32,6 @@ header_only:
     type: bool
     help: Generate a header only library project
 
-semver:
-    type: str
-    help: The current (semantic) version of the project
-    default: 0.0.0-alpha.1
-
-buildver:
-    type: str
-    help: The CMake build version
-    default: "{{ '{}.0'.format(semver.split('-')[0]) }}"
-
 year:
     type: str
     help: The copyright year
