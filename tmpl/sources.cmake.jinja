@@ -1,11 +1,35 @@
 dplx_target_sources({{project_slug}}
     TEST_TARGET {{project_slug}}-tests
-    MODE SMART_{% if header_only == True %}HEADER_ONLY{% else %}SOURCE{% endif %} MERGED_LAYOUT
+    MODE SMART_{% if header_only %}HEADER_ONLY{% else %}SOURCE{% endif %} MERGED_LAYOUT
     BASE_DIR dplx
 
     PUBLIC
         {{namespace}}
+{%- if header_only %}
+{%- if header_config %}
+        {{namespace}}/config
+{%- endif %}
+{%- if workaround_header %}
+        {{namespace}}/detail/workaround
+{%- endif %}
+{%- endif %}
 )
+{%- if not header_only and (header_config or workaround_header) %}
+
+dplx_target_sources({{project_slug}}
+    TEST_TARGET {{project_slug}}-tests
+    MODE SMART_HEADER_ONLY MERGED_LAYOUT
+    BASE_DIR dplx
+
+    PUBLIC
+{%- if header_config %}
+        {{namespace}}/config
+{%- endif %}
+{%- if workaround_header %}
+        {{namespace}}/detail/workaround
+{%- endif %}
+)
+{%- endif %}
 {%- if header_config %}
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx/{{namespace}}/detail)

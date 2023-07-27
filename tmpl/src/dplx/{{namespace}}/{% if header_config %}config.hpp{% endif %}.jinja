@@ -11,3 +11,11 @@
 #if __has_include(<dplx/{{namespace}}/detail/config.hpp>)
 #include <dplx/{{namespace}}/detail/config.hpp>
 #endif
+{% if workaround_header %}
+#if !defined(DPLX_{{namespace|upper}}_DISABLE_WORKAROUNDS)
+#define DPLX_{{namespace|upper}}_DISABLE_WORKAROUNDS 0
+#endif
+#if !defined(DPLX_{{namespace|upper}}_FLAG_OUTDATED_WORKAROUNDS)
+#define DPLX_{{namespace|upper}}_FLAG_OUTDATED_WORKAROUNDS 0
+#endif
+{%- endif %}

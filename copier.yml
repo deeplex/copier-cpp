@@ -28,6 +28,10 @@ header_config:
     type: bool
     help: Generate a configuration header with values from configure time.
 
+workaround_header:
+    type: bool
+    help: Generate a header with (compiler/etc.) workaround configuration macros.
+
 header_only:
     type: bool
     help: Generate a header only library project
