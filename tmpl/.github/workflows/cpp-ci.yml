@@ -62,7 +62,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: ${{ github.workspace }}/build/vcpkg
-          vcpkgGitCommitId: f6a5d4e8eb7476b8d7fc12a56dff300c1c986131
+          vcpkgGitCommitId: a42af01b72c28a8e1d7b48107b33e4f286a55ef6
 
       - name: Build ${{ matrix.triplet }}-${{ matrix.compiler }} preset
         uses: lukka/run-cmake@v10
@@ -113,7 +113,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: ${{ github.workspace }}/../vcpkg
-          vcpkgGitCommitId: f6a5d4e8eb7476b8d7fc12a56dff300c1c986131
+          vcpkgGitCommitId: a42af01b72c28a8e1d7b48107b33e4f286a55ef6
 
       - name: Configure x64-linux-clang preset
         uses: lukka/run-cmake@v10
