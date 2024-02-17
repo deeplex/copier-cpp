@@ -32,8 +32,8 @@ dplx_target_sources({{project_slug}}
 {%- endif %}
 {%- if header_config %}
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx/{{namespace}}/detail)
-configure_file(tools/config.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx/{{namespace}}/detail/config.hpp @ONLY)
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx/{{namespace}}/detail")
+configure_file(tools/config.hpp.in "${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx/{{namespace}}/detail/config.hpp" @ONLY)
 target_sources({{project_slug}} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated/src/dplx/{{namespace}}/detail/config.hpp>)
 {%- endif %}
 
