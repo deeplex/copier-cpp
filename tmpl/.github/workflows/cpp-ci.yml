@@ -50,7 +50,7 @@ jobs:
       CTEST_OUTPUT_ON_FAILURE: "1"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Install required packages / compilers
         if: ${{ matrix.install }}
@@ -102,7 +102,7 @@ jobs:
         actions: read
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: "Install clang-tools-20"
         run: |
