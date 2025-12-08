@@ -22,7 +22,7 @@ jobs:
           - os: windows-2022
             compiler: gcc
         include:
-          - os: macos-13
+          - os: macos-15-intel
             compiler: gcc
             triplet: x64-macos
           - os: macos-15
